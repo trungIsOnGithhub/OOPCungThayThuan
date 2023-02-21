@@ -9,7 +9,8 @@ import java.util.Scanner;
 
 import MenuAndItem.MenuItem;
 import OrdersAndHistory.CustomerOrder;
-
+// import java.text.SimpleDateFormat;
+import java.util.Date;
 /*
  *
  * @author nhom NullPointerException: Trung Nguyen va nhung nguoi ban, Lap trinh nang cao-L02-HK212
@@ -19,27 +20,136 @@ import OrdersAndHistory.CustomerOrder;
  * 1 method ghi lich su don hang vao file txt.
  * 1 method kiem tra yeu cau nhap ten va mat khau(dang cho phat trien)
  */
+abstract class AbstractFile {
+    private String fileName;
+    private File fileObject;
+    // private Scanner scanner;
+    // private FileWriter writer;
+
+    public Scanner getFileScanner() {
+        try
+            { return new Scanner( new File(this.fileName) ); }
+        catch(FileNotFoundException exception) {
+            System.out.println("Kiem tra neu file "+this.fileName+" chua duoc tao");
+            exception.printStackTrace();
+            System.exit();
+        }
+        catch(IOException exception) {
+            System.out.println("Co loi khi doc file "+this.fileName);
+            exception.printStackTrace();
+            System.exit();
+        }
+    }
+    public FileWriter getFileWriter() {
+        try
+            { return new FileWriter( new File(this.fileName), true ); }
+        catch(FileNotFoundException exception) {
+            System.out.println("Kiem tra neu file "+this.fileName+" chua duoc tao");
+            exception.printStackTrace();
+            System.exit();
+        }
+        catch(IOException exception) {
+            System.out.println("Co loi khi doc file "+this.fileName);
+            exception.printStackTrace();
+            System.exit();
+        }
+    }
+}
+
+public class HistoryFile extends AbstractFile {
+    public HistoryFile(String historyFileName) {
+        this.fileName = historyFileName;
+    }
+}
+
+public class AccountsFile extends AbstractFile {
+    public AccountsFile(String accountsFileName) {
+        this.fileName = accountInfoFileName;
+    }
+}
+
+public class CustomersFile extends AbstractFile {
+    public CustomersFile(String customersFileName) {
+        this.fileName = customersFileName;
+    }
+}
+
+public class AbstractFileFactory {
+    public static AbstractFile getAbstractFile(String type, String fileName) {
+        if( type.equalsIgnoreCase("history") )
+            return new HistoryFile(fileName);
+        if( type.equalsIgnoreCase("customers") )
+            return new CustomersFile(fileName);
+        if( type.equalsIgnoreCase("accounts") )
+            return new AccountsFile(fileName);
+        return null;
+    }
+}
+
+abstract class DBFunctionalHelper {
+    final static logFileName = "log_db.txt";
+    final static configFileName = "config.txt";
+
+    // we will only create the abstract File object on local for saving memory
+    // Because we only need those for limited number of time
+    static boolean writeLogFile() {
+
+    }
+
+    static configDBData readConfigFile() {
+        
+    }
+}
+
+class configDBData {
+    private String orderHistoryRecordFileName = "orderHistory.txt";
+    private String customersListFileName = "customersList.txt";
+    private String accountsInfoFileName = "accountsInfo.txt";
+    private String menuItemsFileName = "menuItems.txt";
+
+    void setConfigDBData() {
+        
+    }
+}
 
 /*** SINGLETON CLASS ***/
-public class textDB {
-    private static final String orderHistoryRecordFileName = "orderHistory.txt";
-    private static File orderHistoryFile;
-    
-    private static final String customersListFileName = "customersList.txt";
-    private static File customerListFile;
+public class DBController {
+    //Singleton, One and Only Class
+    private static boolean alreadyExistSession = false;
+    private DBController currentSession;
 
-    private static final String accountsInfoFileName = "accountsInfo.txt";
-    private static File accountsInfoFile;
-
-    private static final String menuItemsFileName = "menuItems.txt";
-    private static File menuItemsFile;
-    
-    public textDB() {
-        textDB.orderHistoryFile = new File( textDB.orderHistoryRecordFileName );
-        textDB.customerListFile = new File( textDB.customersListFileName );
-        textDB.accountsInfoFile = new File( textDB.accountsInfoFileName );
-        textDB.menuItemsFile = new File( textDB.menuItemsFileName );
+    public static textDB getCurrentDBSession() {
+        if(!alreadyExistSession) {
+            this.currentSession = new DBController();
+            alreadyExistSession = true;
+        }
+        return this.currentSession;
     }
+
+    private textDB() {
+        // this.orderHistoryFile = new File( textDB.orderHistoryRecordFileName );
+        // this.customerListFile = new File( textDB.customersListFileName );
+        // this.accountsInfoFile = new File( textDB.accountsInfoFileName );
+        // this.menuItemsFile = new File( textDB.menuItemsFileName );
+        this.sessionStartTime = new Date();
+        this.configData = 
+    }
+
+    private Date sessionStartTime;
+
+    private DBFunctionalHelper.configDBData configData;
+
+    // private String orderHistoryRecordFileName = "orderHistory.txt";
+    // private File orderHistoryFile;
+    
+    // private String customersListFileName = "customersList.txt";
+    // private File customerListFile;
+
+    // private String accountsInfoFileName = "accountsInfo.txt";
+    // private File accountsInfoFile;
+
+    // private String menuItemsFileName = "menuItems.txt";
+    // private File menuItemsFile;
     
     public boolean checkLoginRequest(String username, String password) {
         try {
@@ -167,65 +277,4 @@ public class textDB {
             return false;
         }
     }
-//    public ArrayList<Customer> readALLCustomerInfo() {
-//        try {
-//            Scanner customerScanner = new Scanner( textDB.customerListFile );
-//            
-//            ArrayList<Customer> customersInfoArrayList = new ArrayList<>();
-//            
-//            while( customerScanner.hasNextLine() ){
-//                String line = customerScanner.nextLine();
-//                
-//                String[] splitedLineCustomerInfo = line.split("\\s+");//Copied from StackOverFlow
-//                
-//                customersInfoArrayList.add( new Customer( splitedLineCustomerInfo[0],
-//                                                          splitedLineCustomerInfo[1],
-//                                                          splitedLineCustomerInfo[2] ) );
-//            }
-//            
-//            customerScanner.close();
-//            
-//            return customersInfoArrayList;
-//            
-//        } catch(IOException excep) {
-//            excep.printStackTrace();
-//            return null;
-//        }
-//    }
-    
-//    public boolean writeOrderHistoryDB() {
-//        
-//    }
-//
-//     public boolean writeAllCustomerInfoDB(ArrayList<Customer> customersInfoArrayList) {
-//        try {
-//            FileWriter customerWriter = new FileWriter( textDB.customerListFile, true );
-//            
-//            for( Customer currentCus : customersInfoArrayList ) {
-//
-//                StringBuilder newCustomerLine = new StringBuilder();
-//
-//                newCustomerLine.append( currentCus.getPhoneNumber()  );
-//                newCustomerLine.append(" ");
-//                newCustomerLine.append( currentCus.getCustomerName() );
-//                newCustomerLine.append(" ");
-//                newCustomerLine.append( currentCus.getPointString() );
-//            
-//                customerWriter.write( newCustomerLine.toString() );
-//                customerWriter.write( System.lineSeparator() );
-//            }
-//            
-//            customerWriter.close();
-//            
-//            return true;
-//            
-//        } catch(IOException excep) {
-//            excep.printStackTrace();
-//            return false;
-//        }
-//    }
-//
-//    public boolean writeAccountInfoDB() {
-//        
-//    }
 }
