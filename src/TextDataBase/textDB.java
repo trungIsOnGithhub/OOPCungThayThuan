@@ -74,14 +74,22 @@ public class CustomersFile extends AbstractFile {
     }
 }
 
-public class AbstractFileFactory {
-    public static AbstractFile getAbstractFile(String type, String fileName) {
+public class MenuFile extends AbstractFile {
+    public MenuFile(String menuFileName) {
+        this.fileName = menuFileName;
+    }
+}
+
+public abstract class AbstractFileFactory {
+    public static AbstractFile getFile(String type, String fileName) {
         if( type.equalsIgnoreCase("history") )
             return new HistoryFile(fileName);
         if( type.equalsIgnoreCase("customers") )
             return new CustomersFile(fileName);
         if( type.equalsIgnoreCase("accounts") )
             return new AccountsFile(fileName);
+        if( type.equalsIgnoreCase("menu") )
+            return new MenuFile(fileName);
         return null;
     }
 }
@@ -90,113 +98,31 @@ abstract class DBFunctionalHelper {
     final static logFileName = "log_db.txt";
     final static configFileName = "config.txt";
 
+    // We still enable access from outside to config info of Database, but limited to read-only
+    public class configDBData {
+        private static String orderHistoryRecordFileName = "orderHistory.txt";
+        private static String customersListFileName = "customersList.txt";
+        private static String accountsInfoFileName = "accountsInfo.txt";
+        private static String menuItemsFileName = "menuItems.txt";
+    }
+
     // we will only create the abstract File object on local for saving memory
     // Because we only need those for limited number of time
-    static boolean writeLogFile() {
 
-    }
-
-    static configDBData readConfigFile() {
-        
-    }
-}
-
-class configDBData {
-    private String orderHistoryRecordFileName = "orderHistory.txt";
-    private String customersListFileName = "customersList.txt";
-    private String accountsInfoFileName = "accountsInfo.txt";
-    private String menuItemsFileName = "menuItems.txt";
-
-    void setConfigDBData() {
-        
-    }
-}
-
-/*** SINGLETON CLASS ***/
-public class DBController {
-    //Singleton, One and Only Class
-    private static boolean alreadyExistSession = false;
-    private DBController currentSession;
-
-    public static textDB getCurrentDBSession() {
-        if(!alreadyExistSession) {
-            this.currentSession = new DBController();
-            alreadyExistSession = true;
-        }
-        return this.currentSession;
-    }
-
-    private textDB() {
-        // this.orderHistoryFile = new File( textDB.orderHistoryRecordFileName );
-        // this.customerListFile = new File( textDB.customersListFileName );
-        // this.accountsInfoFile = new File( textDB.accountsInfoFileName );
-        // this.menuItemsFile = new File( textDB.menuItemsFileName );
-        this.sessionStartTime = new Date();
-        this.configData = 
-    }
-
-    private Date sessionStartTime;
-
-    private DBFunctionalHelper.configDBData configData;
-
-    // private String orderHistoryRecordFileName = "orderHistory.txt";
-    // private File orderHistoryFile;
-    
-    // private String customersListFileName = "customersList.txt";
-    // private File customerListFile;
-
-    // private String accountsInfoFileName = "accountsInfo.txt";
-    // private File accountsInfoFile;
-
-    // private String menuItemsFileName = "menuItems.txt";
-    // private File menuItemsFile;
-    
-    public boolean checkLoginRequest(String username, String password) {
-        try {
-            Scanner accountsScanner = new Scanner( accountsInfoFile );
-            
-            boolean result = false;
-            
-            while( accountsScanner.hasNextLine() ){
-                String line = accountsScanner.nextLine();
-                
-                int usernamePos = line.indexOf( username );
-                int passwordPos = -1;
-                
-                if( usernamePos != -1 )
-                    { passwordPos = line.indexOf( password ); }
-                
-                if( usernamePos != -1 && passwordPos != -1 ) {
-                    result = true;
-                    break;
-                }
-            }
-            
-            accountsScanner.close();
-            
-            return result;
-
-        } catch(IOException excep) {
-            excep.printStackTrace();
+    // get config DB data by writing config file
+    private static boolean resetDBConfigData() {
+        Scanner sc = null;
+        try { sc = new Scanner( new File(this.configFileName) ); }
+        catch(FileNotFoundException exception) {
+            System.out.println("Kiem tra neu file ,menuItems.txt chua duoc tao");
+            exception.printStackTrace();
+            return false;
+        } catch(IOException exception) {
+            System.out.println("Co loi khi doc file menuItems.txt");
+            exception.printStackTrace();
             return false;
         }
-    }
 
-    public boolean readMenuFromDB(ArrayList<MenuItem> mainMenu) {
-        Scanner sc = null;
-
-          try {
-            sc = new Scanner( textDB.menuItemsFile );
-          } catch(FileNotFoundException exception) {
-              System.out.println("Kiem tra neu file ,menuItems.txt chua duoc tao");
-              exception.printStackTrace();
-              return false;
-          } catch(IOException exception) {
-              System.out.println("Co loi khi doc file menuItems.txt");
-              exception.printStackTrace();
-              return false;
-          }
-        
         if( sc != null ) {
             mainMenu.clear();
 
@@ -220,9 +146,7 @@ public class DBController {
                     readModeSwitcher = !readModeSwitcher;
                 }
             }
-
             sc.close();
-            
             return true;
         }
         else {
@@ -230,51 +154,131 @@ public class DBController {
             return false;
         }
     }
-    public boolean writeNewMenuItemIntoDB(String newItemName, String newItemPrice) {
-        try {
-            FileWriter menuWriter = new FileWriter( textDB.menuItemsFile, true );
-            
-            menuWriter.write( System.lineSeparator() );
-            
-            menuWriter.write( newItemName );
-            menuWriter.write( " " );
-            menuWriter.write( newItemPrice );
+    // get config DB data by reading config file
+    public static configDBData getDBConfigData() {
+        return null;
+    }
+}
 
-            menuWriter.close();
-            
-            return true;
-            
-        } catch(IOException excep) {
-            excep.printStackTrace();
-            return false;
+/*** SINGLETON CLASS ***/
+public class DBController {
+    //Singleton, One and Only Class
+    private DBController currentSession;
+
+    public static textDB getCurrentDBSession() {
+        if( this.currentSession == null ) {
+            this.currentSession = new DBController();
         }
+        return this.currentSession;
+    }
+
+    private DBController(Date sessionInitTime) {
+        this.sessionInitTime = sessionInitTime;// dependency injection
+        this.configData = new configData();
+    }
+
+    private Date sessionInitTime;
+
+    private configDBData configData;
+
+    // private String orderHistoryRecordFileName = "orderHistory.txt";
+    // private File orderHistoryFile;
+    
+    // private String customersListFileName = "customersList.txt";
+    // private File customerListFile;
+
+    // private String accountsInfoFileName = "accountsInfo.txt";
+    // private File accountsInfoFile;
+
+    // private String menuItemsFileName = "menuItems.txt";
+    // private File menuItemsFile;
+    
+    public boolean checkLoginRequest(String username, String password) {
+        Scanner accountsScanner = AbstractFileFactory.getFile("accounts").getFileScanner();
+        
+        boolean result = false;
+        
+        while( accountsScanner.hasNextLine() ){
+            String lineInput = accountsScanner.nextLine();
+            
+            int usernamePos = lineInput.indexOf( username );
+            int passwordPos = -1;
+            
+            if( usernamePos != -1 )
+                { passwordPos = lineInput.indexOf( password ); }
+            
+            if( usernamePos != -1 && passwordPos != -1 )
+                { result = true; break; }
+        }
+        
+        accountsScanner.close();
+        
+        return result;
+    }
+
+    public boolean readMenuFromDB(ArrayList<MenuItem> mainMenu) {
+        Scanner scanner = AbstractFileFactory.getFile("menu").getFileScanner();
+
+        // // No need??       
+        // if( scanner == null ) {
+        //     System.out.println("Loi khoi tao trinh doc file");
+        //     return false;
+        // }
+
+        mainMenu.clear();
+
+        String tenMon = "";
+        String giaCaStr = "";
+
+        boolean readModeSwitcher = true;
+
+        while( scanner.hasNext() ) {
+            if( readModeSwitcher ) {
+                tenMon = scanner.next();
+            }
+            else {
+                mainMenu.add( new MenuItem(tenMon,giaCaStr) );
+                giaCaStr = scanner.next();
+            }
+            readModeSwitcher = !readModeSwitcher;
+        }
+        scanner.close();
+
+        return true;
+    }
+    public boolean writeNewMenuItemIntoDB(String newItemName, String newItemPrice) {
+        FileWriter menuWriter = AbstractFileFactory.getFile("menu").getFileWriter();
+            
+        menuWriter.write( System.lineSeparator() );
+        
+        menuWriter.write( newItemName );
+        menuWriter.write( " " );
+        menuWriter.write( newItemPrice );
+
+        menuWriter.close();
+        
+        return true;
     }
     
     public boolean writeOrderHistoryIntoDB(ArrayList<CustomerOrder> orderHistory, String dateToPrint, String timeToPrint) {
-        try {
-            FileWriter orderHistoryWriter = new FileWriter( textDB.orderHistoryFile, true );
-            
+        FileWriter orderHistoryWriter = AbstractFileFactory.getFile("history").getFileWriter();
+        
+        orderHistoryWriter.write( System.lineSeparator() );
+        orderHistoryWriter.write( dateToPrint );
+        orderHistoryWriter.write( System.lineSeparator() );
+        orderHistoryWriter.write( timeToPrint );
+        orderHistoryWriter.write( System.lineSeparator() );
+        
+        for( var order : orderHistory ) {
+            System.out.println( order.serializeIntoString() );
+            orderHistoryWriter.write( order.serializeIntoString() );
             orderHistoryWriter.write( System.lineSeparator() );
-            orderHistoryWriter.write( dateToPrint );
-            orderHistoryWriter.write( System.lineSeparator() );
-            orderHistoryWriter.write( timeToPrint );
-            orderHistoryWriter.write( System.lineSeparator() );
-            
-            for( var order : orderHistory ) {
-                System.out.println( order.serializeIntoString() );
-                orderHistoryWriter.write( order.serializeIntoString() );
-                orderHistoryWriter.write( System.lineSeparator() );
-            }
-            
-            orderHistoryWriter.write( System.lineSeparator() );
-
-            orderHistoryWriter.close();
-            
-            return true;
-            
-        } catch(IOException excep) {
-            excep.printStackTrace();
-            return false;
         }
+        
+        orderHistoryWriter.write( System.lineSeparator() );
+
+        orderHistoryWriter.close();
+        
+        return true;
     }
 }
