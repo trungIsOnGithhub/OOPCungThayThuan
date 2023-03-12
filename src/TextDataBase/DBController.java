@@ -11,17 +11,19 @@ import MenuAndItem.MenuItem;
 import OrdersAndHistory.CustomerOrder;
 import java.util.Date;
 /*
- *
  * @author nhom NullPointerException: Trung Nguyen va nhung nguoi ban, Lap trinh nang cao-HK212
- * 
  */
 abstract class AbstractFile {
-    private String fileName;
+    protected String fileName;
+    protected FileWriter fileWriter;
     // private File fileObject;
 
+    abstract boolean appendToFile(String[] args);
+
     public Scanner getFileScanner() {
+        Scanner scanner = null;
         try
-            { return new Scanner(new File(this.fileName)); }
+            { scanner = new Scanner(new File(this.fileName)); }
         // catch(FileNotFoundException exception) {
         //     System.out.println("Kiem tra neu file "+this.fileName+" chua duoc tao");
         //     exception.printStackTrace();
@@ -32,10 +34,11 @@ abstract class AbstractFile {
             exception.printStackTrace();
             System.exit(1);
         }
+        return scanner;
     }
-    public FileWriter getFileWriter(boolean appendable) {
+    public void setUpFileWriter(boolean appendable) {
         try
-            { return new FileWriter(new File(this.fileName), appendable); }
+            { this.fileWriter = new FileWriter(new File(this.fileName), appendable); }
         // catch(FileNotFoundException exception) {
         //     System.out.println("Kiem tra neu file "+this.fileName+" chua duoc tao");
         //     exception.printStackTrace();
@@ -53,11 +56,42 @@ class HistoryFile extends AbstractFile {
     public HistoryFile(String historyFileName) {
         this.fileName = historyFileName;
     }
+
+    boolean appendToFile(String[] args) {
+        if(args.length != 3) return false;
+
+        this.setUpFileWriter(true);
+
+        String orderInfoString = args[0],
+                dateToPrint = args[1],
+                timeToPrint = args[2];
+        try {
+            // this.fileWriter.write(System.lineSeparator());
+            this.fileWriter.write(dateToPrint);
+            this.fileWriter.write(System.lineSeparator());
+            this.fileWriter.write(timeToPrint);
+            this.fileWriter.write(System.lineSeparator());
+            this.fileWriter.write(orderInfoString);
+            this.fileWriter.write(System.lineSeparator());
+
+            this.fileWriter.close();
+        }
+        catch(IOException exception) {
+            System.out.println("Co loi khi doc file "+this.fileName);
+            exception.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 }
 
 class AccountsFile extends AbstractFile {
-    public AccountsFile(String accountsFileName) {
-        this.fileName = accountInfoFileName;
+    public AccountsFile(String accountsInfoFileName) {
+        this.fileName = accountsInfoFileName;
+    }
+
+    boolean appendToFile(String[] args) {
+        return false;
     }
 }
 
@@ -65,11 +99,41 @@ class CustomersFile extends AbstractFile {
     public CustomersFile(String customersFileName) {
         this.fileName = customersFileName;
     }
+
+    boolean appendToFile(String[] args) {
+        return false;
+    }
 }
 
 class MenuFile extends AbstractFile {
     public MenuFile(String menuFileName) {
         this.fileName = menuFileName;
+    }
+
+    boolean appendToFile(String[] args) {
+        if(args.length != 2) return false;
+
+        this.setUpFileWriter(true);
+
+        String newItemName = args[0],
+                newItemPrice = args[1];
+
+        try {
+            // this.fileWriter.write(System.lineSeparator());
+            this.fileWriter.write(newItemName);
+            this.fileWriter.write(" ");
+            this.fileWriter.write(newItemPrice);
+
+            this.fileWriter.write(System.lineSeparator());
+
+            this.fileWriter.close();
+        }
+        catch(IOException exception) {
+            System.out.println("Co loi khi doc file "+this.fileName);
+            exception.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
 
@@ -124,7 +188,6 @@ abstract class DBFunctionalHelper {
     // get config DB data by reading config file
     public static ConfigDBData getDBConfigData() {
         Scanner scanner = null;
-
         try
             { scanner = new Scanner(new File(configFileName)); }
         catch(IOException exception) {
@@ -167,16 +230,16 @@ abstract class DBFunctionalHelper {
 /*** SINGLETON CLASS ***/
 public class DBController {
     //Singleton, One and Only Object
-    private DBController currentSession;
+    private static DBController currentSession;
     
     private Date sessionInitTime;
-    private configDBData configData;
+    private DBFunctionalHelper.ConfigDBData configData;
 
     public static DBController getCurrentDBSession() {
-        if( this.currentSession == null ) {
-            this.currentSession = new DBController();
+        if( currentSession == null ) {
+            currentSession = new DBController(new Date());
         }
-        return this.currentSession;
+        return currentSession;
     }
 
     private DBController(Date sessionInitTime) {
@@ -213,7 +276,7 @@ public class DBController {
     public boolean readMenuFromDB(ArrayList<MenuItem> mainMenu) {
         Scanner accountsScanner = AbstractFileFactory.getFile("menu",
                                 this.configData.getConfigFileName("menu"))
-                            .getFileScanner();
+                                .getFileScanner();
         // // No need??       
         // if( scanner == null ) {
         //     System.out.println("Loi khoi tao trinh doc file");
@@ -225,55 +288,35 @@ public class DBController {
         String menuItemName = "", menuItemPriceStr = "";
 
         boolean readModeSwitchedItemName = true;
-        while( scanner.hasNext() ) {
+        while( accountsScanner.hasNext() ) {
             if( readModeSwitchedItemName ) {
-                menuItemName = scanner.next();
+                menuItemName = accountsScanner.next();
             }
             else { // if( readMode switched to item price
                 mainMenu.add( new MenuItem(menuItemName,menuItemPriceStr) );
-                menuItemPriceStr = scanner.next();
+                menuItemPriceStr = accountsScanner.next();
             }
             readModeSwitchedItemName = !readModeSwitchedItemName;
         }
-        scanner.close();
+        accountsScanner.close();
 
         return true;
     }
 
     public boolean writeNewMenuItemIntoDB(String newItemName, String newItemPrice) {
-        FileWriter menuWriter = AbstractFileFactory.getFile("menu",
-                                this.configData.getConfigFileName("menu"))
-                            .getFileWriter(true);
-            
-        menuWriter.write(System.lineSeparator());
-        
-        menuWriter.write(newItemName);
-        menuWriter.write(" ");
-        menuWriter.write(newItemPrice);
+        AbstractFile currentUseFile = AbstractFileFactory.getFile("menu",
+                                this.configData.getConfigFileName("menu"));
 
-        menuWriter.close();
+        currentUseFile.appendToFile( new String[] {newItemName, newItemPrice} );
         
         return true;// still need to return boolean as for further code, where writing data can be failed
     }
     
-    public boolean writeOrderHistoryIntoDB(ArrayList<CustomerOrder> orderHistory, String dateToPrint, String timeToPrint) {
-        FileWriter orderHistoryWriter = AbstractFileFactory.getFile("history",
-                                this.configData.getConfigFileName("history"))
-                            .getFileWriter(true);
-        
-        orderHistoryWriter.write(System.lineSeparator());
-        orderHistoryWriter.write(dateToPrint);
-        orderHistoryWriter.write(System.lineSeparator());
-        orderHistoryWriter.write(timeToPrint);
-        orderHistoryWriter.write(System.lineSeparator());
-        
-        for(var order : orderHistory) {//using var keyword to avoid changing code
-            orderHistoryWriter.write(order.serializeIntoString());
-            orderHistoryWriter.write(System.lineSeparator());
-        }
-        orderHistoryWriter.write(System.lineSeparator());
+    public boolean writeOrderHistoryIntoDB(String orderInfoString, String dateToPrint, String timeToPrint) {
+        AbstractFile currentUseFile = AbstractFileFactory.getFile("history",
+                                this.configData.getConfigFileName("history"));
 
-        orderHistoryWriter.close();
+        currentUseFile.appendToFile( new String[] {orderInfoString, dateToPrint, timeToPrint} );
         
         return true;
     }
