@@ -1,19 +1,53 @@
 package MenuAndItem;
 
 import java.util.ArrayList;
-import TextDataBase.textDB;
-
+import TextDataBase.DBController;
 /*
  *
  * @author nhom NullPointerException: Trung Nguyen va nhung nguoi ban, Lap trinh nang cao-L02-HK212
- * 
- * Class bao chua gom 1 list(ArrayList) cac menuItem
- * Co 1 method de reset Menu, 1 method de lay ra 1 phien ban deep copy cua danh sach menu hien tai.
+ *
  */
+abstract class MainMenuIterator {
+    private int currentPosition;
+    private Collection<MenuItem> cached;
+
+    MainMenuIterator(Collection<MenuItem> currentMenu) {
+        this.currentPosition = 0;
+        this.cached = currentMenu;
+    }
+
+    boolean hasMoreItem() {
+        return this.currentPosition < this.cached.size()-1;
+    }
+
+    String getNext();
+}
+class PriceIterator implements MainMenuIterator {
+    String getNext() {
+        if( this.hasMoreItem() ) {
+            ++this.currentPosition;
+            return this.cached.get(this.currentPosition).price;
+        }
+        return null;
+    }
+}
+class NameIterator implements MainMenuIterator {
+    String getNext() {
+        if( this.hasMoreItem() ) {
+            ++this.currentPosition;
+            return this.cached.get(this.currentPosition).name;
+        }
+        return null;
+    }
+}
+
 public class MainMenu {
-    // Co rieng mot DB cho MainMenu
     private textDB myDB;
     private ArrayList<MenuItem> mainMenu;
+
+    ArrayList<MenuItem> getShallowCopyOfCurrentMainMenu() {
+        return this.mainMenu;
+    }
     
     public MainMenu() {
         this.resetMainMenu();
@@ -21,9 +55,8 @@ public class MainMenu {
 
     public void resetMainMenu() {
         this.mainMenu = new ArrayList<>();
-        this.myDB = new textDB();
         
-        myDB.readMenuFromDB( this.mainMenu );
+        DBController.getCurrentDBSession().readMenuFromDB( this.mainMenu );
     }
     public ArrayList<MenuItem> getDeepCopyOfCurrentMainMenu() {
         ArrayList<MenuItem> result = new ArrayList<>();
