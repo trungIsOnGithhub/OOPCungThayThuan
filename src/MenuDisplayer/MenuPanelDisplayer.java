@@ -1,18 +1,18 @@
 package MenuDisplayer;
 
-import MenuAndItem.MenuItem;
+import MenuAndItem.MainMenu;
 import java.util.ArrayList;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-
-/**
+/*
  *
  * @author Nguyen Viet Trung
+ *
  */
 public class MenuPanelDisplayer {
     private JPanel mainMenuPanel;
     private ArrayList<MenuItemDisplayer> mainMenuDisplayerList;
-    private ArrayList<MenuItem> mainMenu;
+    private MainMenu mainMenu;
 
     public MenuPanelDisplayer(JPanel UIPanel, ArrayList<MenuItem> mainMenu) {// UIPanel maybe any chosen panel from pre-designed UI
         this.mainMenuPanel = UIPanel;
@@ -40,10 +40,12 @@ public class MenuPanelDisplayer {
     public void updateMenuPanelDisplayer() {        
         this.mainMenuPanel.setLayout( new BoxLayout(this.mainMenuPanel,BoxLayout.Y_AXIS) );//Set mutual layout for big container
         this.mainMenuDisplayerList.clear();
+
+        Iterator menuIterator = this.mainMenu.createIterator("item");
         
-        for( MenuItem item : mainMenu ) {
-            MenuItemDisplayer itemDisplayer = new MenuItemDisplayer( item );
-        
+        while( menuIterator.hasNext() ) {
+            MenuItemDisplayer itemDisplayer = new MenuItemDisplayer( menuIterator.next() );
+
             this.mainMenuPanel.add( itemDisplayer.getJPanel() );
             this.mainMenuDisplayerList.add( itemDisplayer );
         }

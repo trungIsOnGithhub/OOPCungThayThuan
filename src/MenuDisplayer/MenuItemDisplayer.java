@@ -1,6 +1,5 @@
 package MenuDisplayer;
 
-import MenuAndItem.MenuItem;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,26 +7,21 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-
 /*
  *
  * @author nhom NullPointerException: Trung Nguyen va nhung nguoi ban, Lap trinh nang cao-L02-HK212
  *
- * Class nay hien thuc phan UI cho cac Item, gom:
- * 1 nut bam ben trai chua ten mon va gia ca.
- * 1 Spinner(nut chon so) ben phai the hien so luong.
- * 1 Action Listener: Khi gia tri cua Spinner = -1, an nut bam the hien ten mon se dua mon an vao trang thai "Het hang"
- * 3 methods khac de lay cac thanh phan UI can thiet cho viec xu ly.
  */
 public class MenuItemDisplayer {
     private JPanel mainContainer;
     private JButton leftButton;
     private JSpinner rightSpinner;
     
-    public MenuItemDisplayer(MenuItem item) {
+    public MenuItemDisplayer(String menuItemInString) {
         mainContainer = new JPanel();
 
-        leftButton = new JButton( item.serializeIntoString() );
+        leftButton = new JButton( menuItemInString );
+        //need only string for a button so we only provide a string
         
         SpinnerNumberModel jSpinnerModel = new SpinnerNumberModel(0,-1,69,1);
         rightSpinner = new JSpinner( jSpinnerModel );

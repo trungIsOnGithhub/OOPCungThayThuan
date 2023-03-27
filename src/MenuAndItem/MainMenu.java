@@ -1,5 +1,7 @@
 package MenuAndItem;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.ArrayList;
 import TextDataBase.DBController;
 /*
@@ -7,35 +9,39 @@ import TextDataBase.DBController;
  * @author nhom NullPointerException: Trung Nguyen va nhung nguoi ban, Lap trinh nang cao-L02-HK212
  *
  */
-abstract class MainMenuIterator {
+abstract class MainMenuIterator implements Iterator {
     private int currentPosition;
-    private Collection<MenuItem> cached;
+    private List<MenuItem> cached;
 
-    MainMenuIterator(Collection<MenuItem> currentMenu) {
+    MainMenuIterator(List<MenuItem> currentMenu) {
         this.currentPosition = 0;
         this.cached = currentMenu;
     }
 
-    boolean hasMoreItem() {
-        return this.currentPosition < this.cached.size()-1;
+    public final boolean hasNext() {
+        return this.currentPosition < this.cached.size();
     }
-
-    String getNext();
 }
 class PriceIterator implements MainMenuIterator {
-    String getNext() {
+    public String getNext() {
         if( this.hasMoreItem() ) {
-            ++this.currentPosition;
-            return this.cached.get(this.currentPosition).price;
+            return this.cached.get(this.currentPosition++).price;
         }
         return null;
     }
 }
 class NameIterator implements MainMenuIterator {
-    String getNext() {
+    public String getNext() {
         if( this.hasMoreItem() ) {
-            ++this.currentPosition;
-            return this.cached.get(this.currentPosition).name;
+            return this.cached.get(this.currentPosition++).name;
+        }
+        return null;
+    }
+}
+class ItemIterator implements MainMenuIterator {
+    public String next() {
+        if( this.hasMoreItem() ) {
+            return this.cached.get(this.currentPosition++).serializeIntoString();
         }
         return null;
     }
@@ -66,5 +72,16 @@ public class MainMenu {
         }
         
         return result;
+    }
+
+    public Iterator createIterator(String type) {
+        if( type.equalsIgnoreCase("item") )
+            return new ItemIterator(fileName);
+        if( type.equalsIgnoreCase("name") )
+            return new NameIterator(fileName);
+        if( type.equalsIgnoreCase("price") )
+            return new PriceIterator(fileName);
+
+        return null;
     }
 }

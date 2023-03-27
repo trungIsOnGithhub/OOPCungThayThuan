@@ -9,19 +9,10 @@ import MenuDisplayer.MenuItemDisplayer;
 import MenuDisplayer.MenuPanelDisplayer;
 import javax.swing.JOptionPane;
 import TextDataBase.textDB;
-
 /**
  *
  * @author nhom NullPointerException: Trung Nguyen va nhung nguoi ban, Lap trinh nang cao-L02-HK212
  * 
- * Trang chinh cua chuong trinh, noi dien ra cac thao tac ban hang chinh. Bao gom:
- * 1 bang Menu duoc tu sinh ra, co the thay doi bang cac file txt
- * 1 bang Table de xem lai don hang truoc khi quyet dinh
- * 3 nut bam tuong duong 3 chuc nang, Them don vao hang cho, xoa don hien tai, chot don hien tai.
- * 1 textfield nhap so dien thoai don hang
- * 1 textfield hien thi tong gia tri don hang
- * 1 nut bam dan den chuc nang "Them mon moi"
- * 1 nut bam dan den trang "Tong ket thong tin don hang"
  */
 public class MainPage extends javax.swing.JFrame {
     // 1 doi tuong textDatabse dung chung cho tat ca cac dich vu, dat trong mainPage.
