@@ -7,19 +7,20 @@
 
 >*As the codebase is under refactoring process, below is the tasks checklist*
 
-<details markdown="1"><summary>Tasks Checklist</summary>
+##### :paperclip: To go into details:
+
+* **Singleton Design Pattern**
+* **Factory Design Pattern**
+* **Factory Design Pattern**
+* **Wrapper Design Pattern**
+* **Iterator Design Pattern**
+
+-------------------------------------------------------
+#### Tasks Checklist
 - [x] upload original code
 - [x] implement Singleton
 - [ ] implement Factory
-- [ ] implement Wrapper
+- [x] implement Wrapper
+- [x] implement Iterator
 - [ ] re-organize database code
 - [x] add configure option
-</details>
--------------------------------
-##### :paperclip: To go into details:
-
-* **Singleton Design Pattern for Database Controller**
-* **Factory Design Pattern**
-* **Wrapper Design Pattern**
-
--------------------------------------------------------
