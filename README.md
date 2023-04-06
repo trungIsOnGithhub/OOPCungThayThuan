@@ -5,7 +5,7 @@
 >- *This tools is made solely for purpose of learning and practicing, as there may still exists severals bugs and flaws that I am working on :grinning:*
 >- *As mentioned, the idea off stuffing many code architectures in a one simple tools application is unusual and resulting in unnecessary complexity. But at least, i had something to practice :sunglasses:*
 
->*As the codebase is under refactoring process, below is the tasks checklist*
+>*Have not done working with the project yet, so there may be some unfinished parts, I am striving to put an end to it :running:*
 
 ##### :paperclip: To go into details:
 
