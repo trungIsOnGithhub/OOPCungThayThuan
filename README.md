@@ -3,7 +3,7 @@
 *:golf: Coursework project for "Object-Oriented Programming" course **|** Semester 2021-2 **|** HCMUT*
 
 >- *This tools is made solely for purpose of learning and practicing, as there may still exists severals bugs and flaws that I am working on :grinning:*
->- *As mentioned, the idea off stuffing many code architectures in a one simple tools application is unusual and resulting in unnecessary complexity. But at least, i had something to practice :sunglasses:*
+>- *As you may have seen, the idea off stuffing many code architecture design in a one simple tools application is unusual and resulting in unnecessary complexity. But at least, i had something to practice :sunglasses:*
 
 >*Have not done working with the project yet, so there may be some unfinished parts, I am striving to put an end to it :running:*
 
@@ -47,7 +47,8 @@ abstract class AbstractFileFactory {
     }
 }
 ```
-There would be more type of abstract file to be handled further going, so things should be generalized into using Factory for better structure.
+There will be further modification in the creation of ohjects, so things should be generalized into using Factory for better structure.
+It also faclitate **Flyweight Pattern**, paving way for a more efficent way of handling and providing objects to client code.
 * **Decorator Design Pattern**
 ```java
 class PhoneNumberDecorator extends CustomerOrder {
