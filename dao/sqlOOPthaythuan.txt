@@ -1,0 +1,13 @@
+CREATE TABLE `customer_order` (
+	`id` BIGINT NOT NULL AUTO_INCREMENT,
+	`time` DATETIME NOT NULL DEFAULT '',
+	`total` INT unsigned NOT NULL DEFAULT '5000' COMMENT 'mac dinh tra 5000 gui xe',
+	`phone` VARCHAR(11) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT '',
+	KEY `by_phone_number` (`phone`) USING HASH,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+CREATE TRIGGER before_insert_order_set_time_if_null
+  BEFORE INSERT ON customer_order 
+  FOR EACH ROW
+  SET new.time = now();
