@@ -7,6 +7,13 @@ CREATE TABLE `customer_order` (
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
+CREATE TABLE `customer_order` (
+	`id` BIGINT NOT NULL AUTO_INCREMENT,
+	`price` INT unsigned NOT NULL DEFAULT 0,
+	`name` VARCHAR(256) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT '',
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
 CREATE TRIGGER before_insert_order_set_time_if_null
   BEFORE INSERT ON customer_order 
   FOR EACH ROW
