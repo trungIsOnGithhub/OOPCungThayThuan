@@ -13,15 +13,43 @@ class DTOFactory {
 }
 
 class CustomerOrderDTO implements DTO {
-	long total;
-	String phone = "";
+	Integer totalPrice;
+	String phoneNumber = "";
+
 	CustomerOrderDTO(long total) {
+		this.totalPrice = total;
+		this.phoneNumber = "";
+	}
+
+	CustomerOrderDTO(long total, String phoneNumber) {
+		this.totalPrice = total;
+		this.phoneNumber = phoneNumber;
+	}
+	
+	public PreparedStatement fillDataSQLStatement(PreparedStatement statement) throws SQLException {
+		statement.setInt(1, totalPrice.intValue());
+		statement.setString(2, phoneNumber);
+		
+		return statement;	
+	}
+	
+	@Override
+	public String toString() {
+		return "--> " + total + "  " + phone;
+	}
+}
+
+class MenuItemDTO implements DTO {
+    String nameOfItem;
+    Integer priceOfItem;
+
+	MenuItemDTO(long total) {
 		this.total = total;
 	}
 	
 	public PreparedStatement fillDataSQLStatement(PreparedStatement statement) throws SQLException {
-		statement.setLong(1, total);
-		statement.setString(2, phone);
+		statement.setString(1, nameOfItem);
+		statement.setInt(2, priceOfItem.intValue());
 		
 		return statement;	
 	}
