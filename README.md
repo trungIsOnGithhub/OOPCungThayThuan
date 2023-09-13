@@ -1,5 +1,7 @@
 ## Restaurant Order Management Tool
 
+> Using [Java Oracle JDK 17.0.8](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) - [NetBean IDE 16](https://github.com/apache/netbeans/releases/tag/16)
+
 *:golf: Coursework project for "Object-Oriented Programming" course **|** Semester 2021-2 **|** HCMUT*
 
 >- *This tools is made solely for purpose of learning and practicing, as there may still exists severals bugs and flaws that I am working on :grinning:*
@@ -98,7 +100,7 @@ A high-level list of item can have many type of iteration to retrieve packaged-o
 #### Tasks Checklist
 - [x] upload original code
 - [x] implement Singleton
-- [ ] implement Factory
+- [x] implement Factory
 - [x] implement Wrapper
 - [x] implement Iterator
 - [ ] re-organize database code
