@@ -1,6 +1,9 @@
+CREATE DATABASE oop;
+USE oop;
+
 CREATE TABLE `customer_order` (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
-	`time` DATETIME NOT NULL DEFAULT '',
+	`time` DATETIME,
 	`total` INT unsigned NOT NULL DEFAULT '5000' COMMENT 'mac dinh tra 5000 gui xe',
 	`phone` VARCHAR(11) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT '',
 	KEY `by_phone_number` (`phone`) USING HASH,
