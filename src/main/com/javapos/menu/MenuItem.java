@@ -5,9 +5,20 @@ package com.javapos.menu;
  *
  */
 public class MenuItem {
+    static final currencyUnitString = "VND";
     // Ten va gia ca cua tung item phai nhin thay duoc tren toan bo he thong
     String nameOfItem;
     Integer priceOfItem;
+
+    static private boolean isInteger(String input) {
+        try {
+            Integer.parseInt(input);
+        }
+        catch( Exception e ) {
+            return false;
+        }
+        return true;
+    }
     
     public MenuItem() {
         this.nameOfItem = "undefined";
@@ -18,8 +29,13 @@ public class MenuItem {
         this.priceOfItem = price;
     }
     public MenuItem(String name, String price) {
+        if( isInteger(price) ) {
+            this.nameOfItem = "undefined";
+            this.priceOfItem = 0;  
+            return;
+        }
         this.nameOfItem = name;
-        this.priceOfItem = Integer.valueOf( price );
+        this.priceOfItem = Integer.valueOf(price);
     }
     public MenuItem(MenuItem toBeCopied) {
         // Copy Constructor
@@ -34,7 +50,7 @@ public class MenuItem {
 
         String secondPart = firstPart.concat( priceOfItemStr );
         
-        String serialized = secondPart.concat( " VND" );
+        String serialized = secondPart.concat( " " ).concat(currencyUnitString);
         
         return serialized;
     }
