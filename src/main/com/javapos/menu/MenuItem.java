@@ -29,7 +29,7 @@ public class MenuItem {
         this.priceOfItem = price;
     }
     public MenuItem(String name, String price) {
-        if( isInteger(price) ) {
+        if( !isInteger(price) ) {
             this.nameOfItem = "undefined";
             this.priceOfItem = 0;  
             return;
