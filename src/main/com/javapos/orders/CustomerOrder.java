@@ -50,8 +50,9 @@ public class CustomerOrder {
     public String getPhoneNumber() {
         return this.phoneNumber;
     }
-    
-    public String serializeIntoString() {
+
+    @Override
+    public String toString() {
         String totalPriceStr = Integer.toString( totalPrice );
         
         String serialized = this.timeOfOrder.concat( " " );
@@ -79,7 +80,7 @@ public class CustomerOrder {
 
 
     static private String dateFormat = "hh:mm-a";
-    static private boolean isInteger(String input) {
+    static boolean isInteger(String input) {
         try {
             Integer.parseInt(input);
         }
@@ -88,12 +89,12 @@ public class CustomerOrder {
         }
         return true;
     }
-    static private String getCurrentTime() {
+    static String getCurrentTime() {
         Date nowTime = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         return sdf.format(nowTime);
     }
-    static private boolean isValidDate(String input) {
+    static boolean isValidDate(String input) {
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         sdf.setLenient(false);
 
@@ -106,7 +107,7 @@ public class CustomerOrder {
         return true;
     }
 
-    static public void setDateFormatString(String dateFormat) {
+    static void setDateFormatString(String dateFormat) {
         CustomerOrder.dateFormat = dateFormat;
     }
 }
