@@ -78,8 +78,8 @@ public class CustomerOrder {
         this.totalPrice = Integer.valueOf(totalPriceFromMenu);
     }
 
-
-    static private String dateFormat = "hh:mm-a";
+    // non-private for testing
+    static String dateFormat = "hh:mm-a";
     static boolean isInteger(String input) {
         try {
             Integer.parseInt(input);
