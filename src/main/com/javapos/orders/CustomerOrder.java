@@ -25,8 +25,14 @@ public class CustomerOrder {
     }
     public CustomerOrder(String timeOfOrder, String totalPrice, String phoneNumber) {
         this.timeOfOrder = timeOfOrder;
-        this.totalPrice = Integer.valueOf( totalPrice );
         this.phoneNumber = phoneNumber;
+
+        if( !isInteger(totalPrice) ) {
+            this.totalPrice = 0;
+        }
+        else {
+            this.totalPrice = Integer.valueOf( totalPrice );
+        }
     }
     public CustomerOrder(CustomerOrder toBeCopied) {
         // Copy constructor
@@ -55,17 +61,52 @@ public class CustomerOrder {
         serialized = serialized.concat( " " );
         
         serialized = serialized.concat( totalPriceStr );
-        
+
         return serialized;
     }
     
-    public void setUpOrderInfo(String phoneNumberFromMenu, String totalPriceFromMenu) {
-        // Xu ly them thong tin cho thoi gian don hang
-        Date nowTime = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm-a");
-        
-        this.timeOfOrder = sdf.format( nowTime );
-        this.totalPrice = Integer.valueOf( totalPriceFromMenu );
+    public void setUpOrderInfo(String phoneNumberFromMenu, String totalPriceFromMenu) { 
+        this.timeOfOrder = getCurrentTime();
         this.phoneNumber = phoneNumberFromMenu;
+
+        if( !isInteger(totalPriceFromMenu) ) {
+            this.totalPrice = 0;
+            return;
+        }
+
+        this.totalPrice = Integer.valueOf(totalPriceFromMenu);
+    }
+
+
+    static private String dateFormat = "hh:mm-a";
+    static private boolean isInteger(String input) {
+        try {
+            Integer.parseInt(input);
+        }
+        catch(NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+    static private String getCurrentTime() {
+        Date nowTime = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        return sdf.format(nowTime);
+    }
+    static private boolean isValidDate(String input) {
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        sdf.setLenient(false);
+
+        try {
+            sdf.parse(input);
+        } catch(ParseException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    static public void setDateFormatString(String dateFormat) {
+        CustomerOrder.dateFormat = dateFormat;
     }
 }
