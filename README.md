@@ -1,6 +1,8 @@
 ## Restaurant Order Management Tool
 
 * [Reference - CMU Course](https://www.cs.cmu.edu/~charlie/courses/15-214/2013-spring/)
+  
+> New Added Multi User Text Editor App - exercise in Computer Network Course
 
 > Using [Java Oracle JDK 17.0.8](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) - [NetBean IDE 16](https://github.com/apache/netbeans/releases/tag/16)
 
