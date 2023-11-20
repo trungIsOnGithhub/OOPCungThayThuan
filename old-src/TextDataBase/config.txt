@@ -1,4 +1,0 @@
-orderHistory.txt
-customersList.txt
-accountsInfo.txt
-menuItems.txt
